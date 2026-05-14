@@ -13,6 +13,8 @@ export const gameState = {
   particles: [],
   stars: [],
   player: null,
+  bossActive: false,
+  shake: 0,
   spawnTimer: 0,
   spawnRate: 80,
   levelScore: 0,

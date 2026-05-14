@@ -14,6 +14,8 @@ export const ENEMY_TYPES = [
   { id: 'cruiser', w: 36, h: 20, hp: 8, score: 100, speed: 0.6, color: '#8800ff', shootChance: 0.015 },
 ];
 
+export const BOSS_TYPE = { id: 'boss', w: 60, h: 40, hp: 50, score: 500, speed: 0.3, color: '#ff2222', shootChance: 0.05 };
+
 export const PU_TYPES = ['rapid', 'triple', 'shield', 'life'];
 export const PU_COLORS = { rapid: '#ffcc00', triple: '#00eeff', shield: '#88ffcc', life: '#ff3366' };
 export const PU_LABELS = { rapid: 'R', triple: 'T', shield: 'S', life: '♥' };

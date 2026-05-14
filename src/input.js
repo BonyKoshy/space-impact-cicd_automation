@@ -1,3 +1,4 @@
+import nipplejs from 'nipplejs';
 import { gameState } from './state.js';
 import { startGame, respawn } from './game.js';
 
@@ -16,19 +17,37 @@ export function setupInput() {
     gameState.keys[e.code] = false; 
   });
 
-  // Mobile
-  function mobileBtn(id, code) {
-    const btn = document.getElementById(id);
-    if (!btn) return;
-    btn.addEventListener('pointerdown', () => { gameState.keys[code] = true; });
-    btn.addEventListener('pointerup', () => { gameState.keys[code] = false; });
-    btn.addEventListener('pointercancel', () => { gameState.keys[code] = false; });
-  }
+  // Mobile Joystick
+  const joystickZone = document.getElementById('joystick-zone');
+  if (joystickZone) {
+    const manager = nipplejs.create({
+      zone: joystickZone,
+      mode: 'static',
+      position: { left: '50%', top: '50%' },
+      color: '#00eeff'
+    });
 
-  mobileBtn('btn-up', 'ArrowUp');
-  mobileBtn('btn-down', 'ArrowDown');
-  mobileBtn('btn-left', 'ArrowLeft');
-  mobileBtn('btn-right', 'ArrowRight');
+    manager.on('move', (evt, data) => {
+      gameState.keys['ArrowUp'] = false;
+      gameState.keys['ArrowDown'] = false;
+      gameState.keys['ArrowLeft'] = false;
+      gameState.keys['ArrowRight'] = false;
+
+      if (data.direction) {
+        if (data.direction.y === 'up') gameState.keys['ArrowUp'] = true;
+        if (data.direction.y === 'down') gameState.keys['ArrowDown'] = true;
+        if (data.direction.x === 'left') gameState.keys['ArrowLeft'] = true;
+        if (data.direction.x === 'right') gameState.keys['ArrowRight'] = true;
+      }
+    });
+
+    manager.on('end', () => {
+      gameState.keys['ArrowUp'] = false;
+      gameState.keys['ArrowDown'] = false;
+      gameState.keys['ArrowLeft'] = false;
+      gameState.keys['ArrowRight'] = false;
+    });
+  }
 
   const btnFire = document.getElementById('btn-fire');
   if (btnFire) {

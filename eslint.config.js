@@ -11,7 +11,10 @@ export default [
         window: "readonly",
         Math: "readonly",
         requestAnimationFrame: "readonly",
-        setTimeout: "readonly"
+        setTimeout: "readonly",
+        localStorage: "readonly",
+        parseInt: "readonly",
+        Image: "readonly"
       }
     },
     rules: {

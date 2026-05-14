@@ -1,8 +1,11 @@
 import { gameState } from '../state.js';
+import { playShootSound } from '../audio.js';
 
 export function shoot() {
   const p = gameState.player;
   if (!p || p.shootCooldown > 0) return;
+  
+  playShootSound();
   
   const rate = p.rapidFire > 0 ? 7 : p.shootRate;
   p.shootCooldown = rate;

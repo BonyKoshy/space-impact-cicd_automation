@@ -1,11 +1,12 @@
 import { W, H, PU_COLORS } from './config.js';
 import { gameState, domElements } from './state.js';
 import { makePlayer, drawPlayer } from './entities/player.js';
-import { spawnEnemy, drawEnemy } from './entities/enemies.js';
+import { spawnEnemy, spawnBoss, drawEnemy } from './entities/enemies.js';
 import { drawBullets, shoot } from './entities/bullets.js';
 import { spawnPowerup, drawPowerup } from './entities/powerups.js';
 import { explode, updateParticles, drawParticles } from './entities/particles.js';
 import { updateStars, drawStars } from './entities/stars.js';
+import { playStartSound, playLevelUpSound, playPowerupSound } from './audio.js';
 import { rectsOverlap } from './utils.js';
 
 export function updateHUD() {
@@ -33,6 +34,7 @@ export function startGame() {
   
   if (domElements.overlay) domElements.overlay.classList.add('hidden');
   updateHUD();
+  playStartSound();
 }
 
 export function respawn() {
@@ -48,6 +50,7 @@ export function respawn() {
 }
 
 export function playerDied() {
+  gameState.shake = 15;
   explode(gameState.player.x + gameState.player.w / 2, gameState.player.y + gameState.player.h / 2, 40, '#00eeff');
   gameState.lives--;
   updateHUD();
@@ -105,18 +108,28 @@ export function update() {
   gameState.enemyBullets.forEach(b => { b.x += b.vx; b.y += b.vy; });
 
   // Spawn enemies
-  gameState.spawnTimer++;
-  const sr = Math.max(30, gameState.spawnRate - gameState.level * 6);
-  if (gameState.spawnTimer >= sr) { gameState.spawnTimer = 0; spawnEnemy(); }
+  if (!gameState.bossActive) {
+    gameState.spawnTimer++;
+    const sr = Math.max(30, gameState.spawnRate - gameState.level * 6);
+    if (gameState.spawnTimer >= sr) { gameState.spawnTimer = 0; spawnEnemy(); }
+  }
 
   // Update enemies
   gameState.enemies = gameState.enemies.filter(e => e.x > -50);
   gameState.enemies.forEach(e => {
-    e.x += e.vx;
-    if (e.wave) e.y = e.startY + Math.sin(gameState.frame * 0.04 + e.phase) * 30;
-    else e.y += e.vy;
-    e.y = Math.max(2, Math.min(H - e.h - 2, e.y));
-    if (e.startY !== undefined && !e.wave) e.startY = e.y;
+    if (e.isBoss) {
+      if (e.x > W - e.w - 10) e.x += e.vx; // Move into view
+      else {
+        e.y += e.vy;
+        if (e.y <= 0 || e.y + e.h >= H) e.vy *= -1; // Bounce
+      }
+    } else {
+      e.x += e.vx;
+      if (e.wave) e.y = e.startY + Math.sin(gameState.frame * 0.04 + e.phase) * 30;
+      else e.y += e.vy;
+      e.y = Math.max(2, Math.min(H - e.h - 2, e.y));
+      if (e.startY !== undefined && !e.wave) e.startY = e.y;
+    }
 
     // Enemy shooting
     if (Math.random() < e.shootChance * (1 + (gameState.level - 1) * 0.3)) {
@@ -148,7 +161,14 @@ export function update() {
           gameState.levelScore += e.score;
           updateHUD();
           explode(e.x + e.w / 2, e.y + e.h / 2, 15 + e.maxHp * 3, e.color);
-          spawnPowerup(e.x, e.y + e.h / 2);
+          
+          if (e.isBoss) {
+            gameState.shake = 20;
+            gameState.bossActive = false;
+            spawnPowerup(e.x, e.y); spawnPowerup(e.x + 20, e.y); spawnPowerup(e.x + 40, e.y);
+          } else {
+            spawnPowerup(e.x, e.y + e.h / 2);
+          }
         }
       }
     });
@@ -193,6 +213,7 @@ export function update() {
       else if (pu.type === 'triple') p.triShot = 300;
       else if (pu.type === 'shield') p.shield = 400;
       else if (pu.type === 'life' && gameState.lives < 5) { gameState.lives++; updateHUD(); }
+      playPowerupSound();
       explode(pu.x + 7, pu.y + 7, 10, PU_COLORS[pu.type]);
     }
   });
@@ -201,18 +222,31 @@ export function update() {
   updateParticles();
 
   // Level up
-  if (gameState.levelScore >= gameState.levelTarget) {
+  if (gameState.levelScore >= gameState.levelTarget && !gameState.bossActive) {
     gameState.levelScore = 0;
     gameState.level++;
     gameState.levelTarget = Math.round(gameState.levelTarget * 1.4);
     updateHUD();
+    playLevelUpSound();
     for (let i = 0; i < 30; i++) {
       setTimeout(() => explode(Math.random() * W, Math.random() * H, 6, '#ffcc00'), i * 60);
+    }
+    if (gameState.level % 5 === 0) {
+      spawnBoss();
     }
   }
 }
 
 export function draw(ctx) {
+  ctx.save();
+  if (gameState.shake > 0) {
+    const dx = (Math.random() - 0.5) * gameState.shake;
+    const dy = (Math.random() - 0.5) * gameState.shake;
+    ctx.translate(dx, dy);
+    gameState.shake *= 0.9;
+    if (gameState.shake < 0.5) gameState.shake = 0;
+  }
+
   ctx.clearRect(0, 0, W, H);
   ctx.fillStyle = '#000008';
   ctx.fillRect(0, 0, W, H);
@@ -243,4 +277,6 @@ export function draw(ctx) {
     drawStatus('TRI', p.triShot, '#00eeff');
     drawStatus('SHIELD', p.shield, '#88ffcc');
   }
+
+  ctx.restore();
 }

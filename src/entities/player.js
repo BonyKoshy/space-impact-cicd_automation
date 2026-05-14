@@ -15,6 +15,8 @@ export function makePlayer() {
   };
 }
 
+import { sprites } from '../assets.js';
+
 export function drawPlayer(ctx) {
   const p = gameState.player;
   if (!p) return;
@@ -33,28 +35,11 @@ export function drawPlayer(ctx) {
     ctx.globalAlpha = 1;
   }
 
-  // Body
-  ctx.fillStyle = '#44ddff';
-  ctx.fillRect(x + 6, y + 4, 16, 6);
-  ctx.fillRect(x + 14, y + 2, 10, 10);
-
-  // Cockpit
-  ctx.fillStyle = '#003344';
-  ctx.fillRect(x + 18, y + 4, 5, 6);
-
-  // Top wing
-  ctx.fillStyle = '#2299bb';
-  ctx.fillRect(x, y, 14, 4);
-  ctx.fillRect(x + 2, y - 2, 6, 2);
-
-  // Bottom wing
-  ctx.fillRect(x, y + 10, 14, 4);
-  ctx.fillRect(x + 2, y + 14, 6, 2);
-
-  // Engine glow
-  const glowAmt = 0.6 + 0.4 * Math.sin(gameState.frame * 0.3);
-  ctx.fillStyle = `rgba(0,255,200,${glowAmt})`;
-  ctx.fillRect(x + 4, y + 5, 4, 4);
-  ctx.fillStyle = `rgba(255,255,100,${glowAmt * 0.7})`;
-  ctx.fillRect(x + 2, y + 6, 3, 2);
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  
+  const sw = 40, sh = 40;
+  ctx.drawImage(sprites.player, x - (sw - p.w)/2, y - (sh - p.h)/2, sw, sh);
+  
+  ctx.restore();
 }

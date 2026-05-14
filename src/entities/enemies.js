@@ -1,5 +1,25 @@
-import { W, H, ENEMY_TYPES } from '../config.js';
+import { W, H, ENEMY_TYPES, BOSS_TYPE } from '../config.js';
 import { gameState } from '../state.js';
+import { sprites } from '../assets.js';
+
+export function spawnBoss() {
+  gameState.bossActive = true;
+  const t = { ...BOSS_TYPE };
+  const y = H / 2 - t.h / 2;
+  gameState.enemies.push({
+    ...t,
+    x: W + 10, y,
+    startY: y,
+    vx: -0.5,
+    vy: 1,
+    phase: 0,
+    wave: false,
+    hp: t.hp + (gameState.level * 5),
+    maxHp: t.hp + (gameState.level * 5),
+    hitFlash: 0,
+    isBoss: true
+  });
+}
 
 export function spawnEnemy() {
   const lvl = Math.min(gameState.level, 4);
@@ -33,49 +53,45 @@ export function spawnEnemy() {
 export function drawEnemy(ctx, e) {
   const x = Math.round(e.x), y = Math.round(e.y);
   const flash = e.hitFlash > 0;
-  const col = flash ? '#ffffff' : e.color;
-
-  ctx.fillStyle = col;
-  if (e.id === 'scout') {
-    ctx.fillRect(x, y + 3, 14, 4);
-    ctx.fillRect(x + 6, y, 8, 10);
-    ctx.fillRect(x + 12, y + 2, 6, 6);
-    ctx.fillStyle = '#ff0000';
-    ctx.fillRect(x + 0, y + 3, 4, 4);
-  } else if (e.id === 'fighter') {
-    ctx.fillRect(x, y + 4, 18, 4);
-    ctx.fillRect(x + 6, y + 1, 12, 10);
-    ctx.fillRect(x + 14, y + 3, 8, 6);
-    ctx.fillRect(x, y, 8, 3);
-    ctx.fillRect(x, y + 9, 8, 3);
-    ctx.fillStyle = '#ffaa00';
-    ctx.fillRect(x, y + 4, 3, 4);
-  } else if (e.id === 'bomber') {
-    ctx.fillRect(x + 2, y + 6, 22, 4);
-    ctx.fillRect(x + 8, y + 2, 16, 12);
-    ctx.fillRect(x + 18, y + 4, 10, 8);
-    ctx.fillRect(x, y + 4, 10, 3);
-    ctx.fillRect(x, y + 9, 10, 3);
-    ctx.fillStyle = '#ff00ff';
-    ctx.fillRect(x + 2, y + 5, 4, 6);
+  
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  
+  if (flash) {
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(x, y, e.w, e.h);
   } else {
-    ctx.fillRect(x + 4, y + 8, 28, 4);
-    ctx.fillRect(x + 12, y + 3, 20, 14);
-    ctx.fillRect(x + 24, y + 5, 12, 10);
-    ctx.fillRect(x, y + 5, 16, 4);
-    ctx.fillRect(x, y + 11, 16, 4);
-    ctx.fillStyle = '#ffff00';
-    ctx.fillRect(x + 4, y + 7, 6, 6);
+    let sprite = sprites.scout;
+    if (e.isBoss) sprite = sprites.boss;
+    else if (e.id === 'cruiser') sprite = sprites.cruiser;
+    else if (e.id === 'fighter') sprite = sprites.fighter;
+
+    const scale = e.isBoss ? 1.5 : 1.5;
+    const sw = e.w * scale;
+    const sh = e.h * scale;
+    const sx = x - (sw - e.w) / 2;
+    const sy = y - (sh - e.h) / 2;
+    
+    ctx.drawImage(sprite, sx, sy, sw, sh);
   }
 
-  // HP bar
-  if (e.maxHp > 1) {
+  if (e.isBoss) {
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.fillStyle = '#440000';
+    ctx.fillRect(W / 2 - 50, 10, 100, 6);
+    ctx.fillStyle = '#ff2222';
+    ctx.fillRect(W / 2 - 50, 10, 100 * (e.hp / e.maxHp), 6);
+  } else if (e.maxHp > 1) {
+    ctx.globalCompositeOperation = 'source-over';
     const bw = e.w, bh = 3;
     ctx.fillStyle = '#333';
     ctx.fillRect(x, y - 5, bw, bh);
     ctx.fillStyle = e.hp / e.maxHp > 0.5 ? '#44ff44' : e.hp / e.maxHp > 0.25 ? '#ffaa00' : '#ff2222';
     ctx.fillRect(x, y - 5, Math.round(bw * e.hp / e.maxHp), bh);
   }
-
+  
+  ctx.restore();
+  
   if (e.hitFlash > 0) e.hitFlash--;
 }

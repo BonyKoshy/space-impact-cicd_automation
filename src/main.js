@@ -4,6 +4,7 @@ import { domElements } from './state.js';
 import { setupInput } from './input.js';
 import { initStars } from './entities/stars.js';
 import { update, draw } from './game.js';
+import { preloadAssets } from './assets.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   domElements.canvas = document.getElementById('c');
@@ -21,10 +22,15 @@ document.addEventListener('DOMContentLoaded', () => {
   domElements.canvas.height = H;
 
   function resize() {
-    const maxW = Math.min(window.innerWidth - 16, 600);
-    const scale = Math.min(maxW / W, (window.innerHeight - 140) / H);
-    domElements.canvas.style.width = (W * scale) + 'px';
-    domElements.canvas.style.height = (H * scale) + 'px';
+    const wrapper = document.getElementById('game-wrapper');
+    wrapper.style.transform = 'none';
+    const rect = wrapper.getBoundingClientRect();
+    const scaleX = window.innerWidth / rect.width;
+    const scaleY = window.innerHeight / rect.height;
+    // For retro games, we want to scale to fit the screen without stretching
+    const scale = Math.min(scaleX, scaleY) * 0.98; // 98% to leave a tiny margin
+    wrapper.style.transform = `scale(${scale})`;
+    wrapper.style.transformOrigin = 'center center';
   }
   resize();
   window.addEventListener('resize', resize);
@@ -39,12 +45,17 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   initStars();
-  showMenu();
+  
+  domElements.olTitle.textContent = 'LOADING...';
+  domElements.olBody.innerHTML = 'Preloading retro assets';
 
-  function loop() {
-    update();
-    draw(domElements.ctx);
-    requestAnimationFrame(loop);
-  }
-  loop();
+  preloadAssets(() => {
+    showMenu();
+    function loop() {
+      update();
+      draw(domElements.ctx);
+      requestAnimationFrame(loop);
+    }
+    loop();
+  });
 });

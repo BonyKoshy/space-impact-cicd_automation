@@ -1,6 +1,8 @@
 import { gameState } from '../state.js';
+import { playExplosionSound } from '../audio.js';
 
 export function explode(x, y, count, col) {
+  playExplosionSound(count > 20);
   for (let i = 0; i < count; i++) {
     const ang = Math.random() * Math.PI * 2;
     const spd = 0.5 + Math.random() * 3;
