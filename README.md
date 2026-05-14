@@ -58,8 +58,8 @@ A retro-style 2D space shooter built using **HTML5 Canvas, CSS, and JavaScript**
 1. **Clone the repository:**
 
    ```bash
-   git clone https://github.com/your-username/space-impact.git
-   cd space-impact
+   git clone https://github.com/BonyKoshy/space-impact-cicd_automation.git
+   cd space-impact-cicd_automation
    ```
 
 2. **Install dependencies:**

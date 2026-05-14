@@ -1,5 +1,14 @@
+// Game Dimensions
 export const W = 480;
 export const H = 300;
+
+// Balancing Constants
+export const INITIAL_LEVEL_TARGET = 200;
+export const LEVEL_SCALING_FACTOR = 1.4;
+export const SPAWN_RATE_INITIAL = 80;
+export const SPAWN_RATE_MIN = 30;
+export const PLAYER_INVINCIBILITY_DURATION = 120; // frames
+export const PLAYER_RESPAWN_INVINCIBILITY = 80;   // frames
 
 export const STAR_LAYERS = [
   { count: 60, speed: 0.3, size: 1, alpha: 0.4 },

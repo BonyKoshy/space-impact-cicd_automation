@@ -20,6 +20,9 @@ document.addEventListener('DOMContentLoaded', () => {
   domElements.levelEl = document.getElementById('level-display');
   domElements.livesEl = document.getElementById('lives-display');
   domElements.hiscoreEl = document.getElementById('hiscore-display');
+  domElements.menuMain = document.getElementById('menu-main');
+  domElements.menuControls = document.getElementById('menu-controls');
+  domElements.controlsFooter = document.getElementById('controls-footer');
 
   domElements.canvas.width = W; 
   domElements.canvas.height = H;
@@ -116,11 +119,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   preloadAssets(() => {
     showMainMenu();
+    let rafId;
     function loop() {
       update();
       draw(domElements.ctx);
-      requestAnimationFrame(loop);
+      rafId = requestAnimationFrame(loop);
     }
+    if (rafId) cancelAnimationFrame(rafId);
     loop();
   });
 });

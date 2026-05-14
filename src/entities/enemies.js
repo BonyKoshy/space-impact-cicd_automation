@@ -67,7 +67,7 @@ export function drawEnemy(ctx, e) {
     else if (e.id === 'cruiser') sprite = sprites.cruiser;
     else if (e.id === 'fighter') sprite = sprites.fighter;
 
-    const scale = e.isBoss ? 1.5 : 1.5;
+    const scale = e.isBoss ? 2.0 : 1.5;
     const sw = e.w * scale;
     const sh = e.h * scale;
     const sx = x - (sw - e.w) / 2;

@@ -1,4 +1,9 @@
-import { W, H, PU_COLORS } from './config.js';
+import { 
+  W, H, PU_COLORS, 
+  INITIAL_LEVEL_TARGET, LEVEL_SCALING_FACTOR, 
+  SPAWN_RATE_INITIAL, SPAWN_RATE_MIN, 
+  PLAYER_RESPAWN_INVINCIBILITY 
+} from './config.js';
 import { gameState, domElements } from './state.js';
 import { makePlayer, drawPlayer } from './entities/player.js';
 import { spawnEnemy, spawnBoss, drawEnemy } from './entities/enemies.js';
@@ -22,8 +27,8 @@ export function startGame(startLevel = 1, competitive = true) {
   gameState.lives = 3; 
   gameState.level = startLevel;
   gameState.levelScore = 0;
-  // Scale levelTarget for where we are starting
-  gameState.levelTarget = Math.round(200 * Math.pow(1.4, startLevel - 1));
+  // H-4: Scale levelTarget for where we are starting using config constants
+  gameState.levelTarget = Math.round(INITIAL_LEVEL_TARGET * Math.pow(LEVEL_SCALING_FACTOR, startLevel - 1));
   gameState.player = makePlayer();
   gameState.enemies = []; 
   gameState.bullets = []; 
@@ -31,7 +36,7 @@ export function startGame(startLevel = 1, competitive = true) {
   gameState.powerups = []; 
   gameState.particles = [];
   gameState.spawnTimer = 0; 
-  gameState.spawnRate = 80; 
+  gameState.spawnRate = SPAWN_RATE_INITIAL; 
   gameState.frame = 0;
   gameState.bossActive = false;
   gameState.state = 'playing';
@@ -43,7 +48,7 @@ export function startGame(startLevel = 1, competitive = true) {
 
 export function respawn() {
   gameState.player = makePlayer();
-  gameState.player.invincible = 120;
+  gameState.player.invincible = PLAYER_RESPAWN_INVINCIBILITY;
   gameState.enemies = []; 
   gameState.bullets = []; 
   gameState.enemyBullets = [];
@@ -72,13 +77,12 @@ export function playerDied() {
     domElements.olScore.textContent = `SCORE: ${gameState.score}${modeTag}  HI: ${gameState.hiScore}`;
     domElements.olBody.innerHTML = '';
     domElements.olPress.textContent = '';
-    // Re-show the main menu so player can choose mode/level
-    const menuMain = document.getElementById('menu-main');
-    const menuControls = document.getElementById('menu-controls');
-    const controlsFooter = document.getElementById('controls-footer');
-    if (menuMain) menuMain.classList.remove('hidden');
-    if (menuControls) menuControls.classList.add('hidden');
-    if (controlsFooter) controlsFooter.classList.remove('hidden');
+    domElements.olBody.innerHTML = '';
+    domElements.olPress.textContent = '';
+    // M-11: Re-show the main menu using global state references
+    if (domElements.menuMain) domElements.menuMain.classList.remove('hidden');
+    if (domElements.menuControls) domElements.menuControls.classList.add('hidden');
+    if (domElements.controlsFooter) domElements.controlsFooter.classList.remove('hidden');
   } else {
     gameState.state = 'dead';
     domElements.overlay.classList.remove('hidden');
@@ -87,11 +91,11 @@ export function playerDied() {
     domElements.olScore.textContent = `LIVES: ${'♥'.repeat(gameState.lives)}`;
     domElements.olBody.innerHTML = '';
     domElements.olPress.textContent = 'PRESS SPACE TO CONTINUE';
-    // Hide the mode selection — this is mid-game, not the main menu
-    const menuMain = document.getElementById('menu-main');
-    const controlsFooter = document.getElementById('controls-footer');
-    if (menuMain) menuMain.classList.add('hidden');
-    if (controlsFooter) controlsFooter.classList.add('hidden');
+    domElements.olBody.innerHTML = '';
+    domElements.olPress.textContent = 'PRESS SPACE TO CONTINUE';
+    // M-11: Hide the mode selection using global state references
+    if (domElements.menuMain) domElements.menuMain.classList.add('hidden');
+    if (domElements.controlsFooter) domElements.controlsFooter.classList.add('hidden');
   }
 }
 
@@ -133,7 +137,7 @@ export function update() {
   // Spawn enemies
   if (!gameState.bossActive) {
     gameState.spawnTimer++;
-    const sr = Math.max(30, gameState.spawnRate - gameState.level * 6);
+    const sr = Math.max(SPAWN_RATE_MIN, gameState.spawnRate - gameState.level * 6);
     if (gameState.spawnTimer >= sr) { gameState.spawnTimer = 0; spawnEnemy(); }
   }
 
@@ -251,7 +255,7 @@ export function update() {
   if (gameState.levelScore >= gameState.levelTarget && !gameState.bossActive) {
     gameState.levelScore = 0;
     gameState.level++;
-    gameState.levelTarget = Math.round(gameState.levelTarget * 1.4);
+    gameState.levelTarget = Math.round(gameState.levelTarget * LEVEL_SCALING_FACTOR);
     updateHUD();
     playLevelUpSound();
     for (let i = 0; i < 30; i++) {

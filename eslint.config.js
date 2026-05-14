@@ -24,7 +24,12 @@ export default [
       "no-unused-vars": "warn",
       "no-undef": "error",
       "semi": ["error", "always"],
-      "quotes": ["error", "single", { "avoidEscape": true }]
+      "quotes": ["error", "single", { "avoidEscape": true }],
+      "eqeqeq": ["error", "always"],
+      "prefer-const": "error",
+      "no-var": "error",
+      "curly": "error",
+      "no-console": ["warn", { "allow": ["warn", "error"] }]
     }
   }
 ];

@@ -8,12 +8,14 @@
     "build": "vite build --base ./",
     "preview": "vite preview",
     "lint:js": "eslint \"src/**/*.js\" --fix",
+    "lint:js:check": "eslint \"src/**/*.js\"",
     "lint:css": "stylelint \"src/**/*.css\" --fix",
+    "lint:css:check": "stylelint \"src/**/*.css\"",
     "lint:html": "htmlhint index.html",
     "test": "vitest run",
     "test:watch": "vitest"
   },
-  "author": "",
+  "author": "Bony Koshy",
   "license": "ISC",
   "devDependencies": {
     "eslint": "^10.3.0",

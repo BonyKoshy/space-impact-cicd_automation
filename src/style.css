@@ -298,6 +298,19 @@ canvas {
 }
 .primary-btn:active { box-shadow: none; transform: translate(2px, 2px); }
 
+.secondary-btn {
+  background: #000814;
+  border-color: #666;
+  color: #888;
+  box-shadow: 2px 2px 0 #222;
+}
+.secondary-btn:hover {
+  background: #222;
+  color: #fff;
+  border-color: #999;
+}
+.secondary-btn:active { box-shadow: none; transform: translate(2px, 2px); }
+
 .ghost-btn {
   background: transparent;
   border: 1px solid rgb(0 238 255 / 25%);
@@ -403,6 +416,11 @@ canvas {
   touch-action: manipulation;
 }
 .ctrl-btn:active { background: rgb(0 238 255 / 18%); }
+
+#btn-fire {
+  font-size: 9px;
+  padding: 18px 22px;
+}
 
 #joystick-zone {
   position: relative;

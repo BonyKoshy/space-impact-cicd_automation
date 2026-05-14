@@ -35,4 +35,7 @@ export const domElements = {
   levelEl: null,
   livesEl: null,
   hiscoreEl: null,
+  menuMain: null,
+  menuControls: null,
+  controlsFooter: null,
 };
