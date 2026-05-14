@@ -2,11 +2,11 @@ export const sprites = {};
 
 export function preloadAssets(onComplete) {
   const toLoad = [
-    { name: 'player', src: '/assets/player_ship.png' },
-    { name: 'scout', src: '/assets/scout.png' },
-    { name: 'fighter', src: '/assets/fighter.png' },
-    { name: 'cruiser', src: '/assets/cruiser.png' },
-    { name: 'boss', src: '/assets/boss.png' }
+    { name: 'player', src: './assets/player_ship.png' },
+    { name: 'scout', src: './assets/scout.png' },
+    { name: 'fighter', src: './assets/fighter.png' },
+    { name: 'cruiser', src: './assets/cruiser.png' },
+    { name: 'boss', src: './assets/boss.png' }
   ];
   
   let loaded = 0;
