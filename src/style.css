@@ -62,7 +62,7 @@ canvas {
   align-items: center;
   justify-content: center;
   background: #00000e;
-  color: #fff;
+  color: #ffffff;
   text-align: center;
   gap: 4px;
   padding: 6px 8px;
@@ -78,10 +78,10 @@ canvas {
   inset: 0;
   background: repeating-linear-gradient(
     to bottom,
-    transparent 0px,
+    transparent 0,
     transparent 2px,
-    rgba(0,0,0,0.18) 2px,
-    rgba(0,0,0,0.18) 4px
+    rgb(0 0 0 / 18%) 2px,
+    rgb(0 0 0 / 18%) 4px
   );
   pointer-events: none;
   z-index: 20;
@@ -106,6 +106,7 @@ canvas {
   font-size: 17px;
   font-weight: 700;
   color: var(--accent);
+
   /* Hard pixel text shadow — no blur, offset stacking like NES palettes */
   text-shadow:
     2px 2px 0 #003355,
@@ -118,7 +119,7 @@ canvas {
 
 #overlay p {
   font-size: 9px;
-  color: #aaa;
+  color: #aaaaaa;
   line-height: 1.5;
   position: relative;
   z-index: 5;
@@ -183,12 +184,14 @@ canvas {
   padding: 6px 8px;
   width: 46%;
   max-width: 155px;
+
   /* Double border: thin inner gap + outer line — classic NES window */
   border: 2px solid var(--accent);
   box-shadow:
-    0 0 0 1px #000,        /* gap */
+    0 0 0 1px #000000,        /* gap */
     0 0 0 3px var(--accent), /* outer */
     inset 0 0 0 1px #001a2a; /* inner highlight */
+
   background: #000814;
   position: relative;
   image-rendering: pixelated;
@@ -204,6 +207,7 @@ canvas {
   color: var(--accent);
   line-height: 1;
 }
+
 .mode-card::after {
   content: '◆';
   position: absolute;
@@ -217,10 +221,11 @@ canvas {
 #card-arcade {
   border-color: var(--accent3);
   box-shadow:
-    0 0 0 1px #000,
+    0 0 0 1px #000000,
     0 0 0 3px var(--accent3),
     inset 0 0 0 1px #2a1a00;
 }
+
 #card-arcade::before, #card-arcade::after {
   color: var(--accent3);
 }
@@ -247,6 +252,7 @@ canvas {
   image-rendering: pixelated;
   filter: drop-shadow(0 0 3px var(--accent));
 }
+
 #card-arcade .mode-icon-img {
   filter: drop-shadow(0 0 3px var(--accent3));
 }
@@ -289,9 +295,11 @@ canvas {
   border-color: var(--accent);
   color: var(--accent);
   width: 70px;
+
   /* Pixel depth shadow */
   box-shadow: 2px 2px 0 #003355;
 }
+
 .primary-btn:hover {
   background: var(--accent);
   color: #000810;
@@ -300,14 +308,15 @@ canvas {
 
 .secondary-btn {
   background: #000814;
-  border-color: #666;
-  color: #888;
-  box-shadow: 2px 2px 0 #222;
+  border-color: #666666;
+  color: #888888;
+  box-shadow: 2px 2px 0 #222222;
 }
+
 .secondary-btn:hover {
-  background: #222;
-  color: #fff;
-  border-color: #999;
+  background: #222222;
+  color: #ffffff;
+  border-color: #999999;
 }
 .secondary-btn:active { box-shadow: none; transform: translate(2px, 2px); }
 
@@ -319,6 +328,7 @@ canvas {
   padding: 3px 10px;
   letter-spacing: 0.5px;
 }
+
 .ghost-btn:hover {
   border-color: rgb(0 238 255 / 60%);
   color: rgb(0 238 255 / 80%);
@@ -348,9 +358,10 @@ canvas {
   align-items: center;
   justify-content: center;
 }
+
 .lvl-btn:hover {
   background: var(--accent3);
-  color: #000;
+  color: #000000;
   border-color: var(--accent3);
 }
 .lvl-btn:active { box-shadow: none; transform: translate(2px, 2px); }
@@ -365,7 +376,7 @@ canvas {
   position: relative;
   z-index: 5;
   border: 2px solid rgb(0 238 255 / 30%);
-  box-shadow: 0 0 0 1px #000, 0 0 0 3px rgb(0 238 255 / 15%);
+  box-shadow: 0 0 0 1px #000000, 0 0 0 3px rgb(0 238 255 / 15%);
   background: #000814;
   padding: 8px;
 }
@@ -373,19 +384,22 @@ canvas {
 .controls-table {
   border-collapse: collapse;
   font-size: 9px;
-  color: #ccc;
+  color: #cccccc;
 }
 .controls-table tr { line-height: 1; }
+
 .controls-table td {
   padding: 2px 8px;
   text-align: left;
 }
+
 .controls-table td:first-child {
   color: var(--accent);
   font-weight: 700;
   text-align: right;
   min-width: 68px;
 }
+
 .ctrl-mobile {
   color: rgb(0 238 255 / 45%) !important;
   font-size: 8px !important;
@@ -452,7 +466,7 @@ canvas {
   background: #000814;
   border: 2px solid var(--accent);
   box-shadow:
-    0 0 0 1px #000,
+    0 0 0 1px #000000,
     0 0 0 3px var(--accent);
   padding: 16px 24px;
   position: relative;
@@ -470,7 +484,7 @@ canvas {
 
 #quit-sub {
   font-size: 10px;
-  color: #999;
+  color: #999999;
   margin: 0;
 }
 

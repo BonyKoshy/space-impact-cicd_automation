@@ -11,7 +11,6 @@ export const gameState = {
   enemies: [],
   powerups: [],
   particles: [],
-  stars: [],
   player: null,
   bossActive: false,
   shake: 0,

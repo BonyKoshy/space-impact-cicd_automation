@@ -13,9 +13,12 @@ A retro-style 2D space shooter built using **HTML5 Canvas, CSS, and JavaScript**
 - 💥 Particle explosion effects
 - 🌌 Animated starfield background
 - 📊 HUD displaying Score, Level, and Lives
-- 📱 Mobile-friendly controls (touch support)
+- 📱 Mobile-friendly controls with Virtual Joystick (`nipplejs`)
 - ⌨️ Keyboard controls for desktop
-- 🔁 Game states: Menu, Playing, Dead, Game Over
+- 💾 **Persistent High Scores** (Local Storage)
+- 🎮 **Game Modes**: Arcade (Select Level) and Competitive
+- 🛡️ **Robust 7-stage CI/CD Pipeline** (Security, Testing, Build, Deploy)
+- 👾 **Modernized Enemy AI** and Boss Encounter logic
 
 ---
 
@@ -35,9 +38,11 @@ A retro-style 2D space shooter built using **HTML5 Canvas, CSS, and JavaScript**
 
 ## ⚙️ Technologies Used
 
-- HTML5 Canvas
-- CSS3 (Retro UI styling)
-- ES6 Modules (Vanilla JavaScript)
+- ⚡ **Vite 8** – Next-generation build tool
+- 🧪 **Vitest 4** – Modern unit testing
+- 🛡️ **GitHub CodeQL** – Automated security analysis (SAST)
+- 🏷️ **Semantic Release** – Automated versioning and changelogs
+- 🎨 **ESLint 10 & Stylelint 17** – Strict code quality enforcement
 - Vite (Build Tool & Dev Server)
 
 ---
