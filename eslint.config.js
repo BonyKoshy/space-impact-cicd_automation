@@ -14,7 +14,10 @@ export default [
         setTimeout: "readonly",
         localStorage: "readonly",
         parseInt: "readonly",
-        Image: "readonly"
+        Image: "readonly",
+        console: "readonly",
+        AudioContext: "readonly",
+        webkitAudioContext: "readonly"
       }
     },
     rules: {
