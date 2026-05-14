@@ -1,6 +1,7 @@
 {
   "name": "space-impact",
   "version": "1.0.0",
+  "private": true,
   "description": "A retro-style 2D space shooter.",
   "scripts": {
     "dev": "vite",
