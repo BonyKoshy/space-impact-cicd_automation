@@ -1,0 +1,26 @@
+{
+  "name": "space-impact",
+  "version": "1.0.0",
+  "description": "A retro-style 2D space shooter.",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint:js": "eslint src/**/*.js --fix",
+    "lint:css": "stylelint src/**/*.css --fix",
+    "lint:html": "htmlhint index.html",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "^10.3.0",
+    "htmlhint": "^1.9.2",
+    "stylelint": "^17.11.1",
+    "stylelint-config-standard": "^40.0.0",
+    "vite": "^8.0.13",
+    "vitest": "^4.1.6"
+  },
+  "type": "module"
+}

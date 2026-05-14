@@ -1,0 +1,34 @@
+export const gameState = {
+  state: 'menu', // menu | playing | dead | gameover
+  score: 0,
+  hiScore: parseInt(localStorage.getItem('spaceImpactHiScore') || '0', 10),
+  lives: 3,
+  level: 1,
+  frame: 0,
+  paused: false,
+  bullets: [],
+  enemyBullets: [],
+  enemies: [],
+  powerups: [],
+  particles: [],
+  stars: [],
+  player: null,
+  spawnTimer: 0,
+  spawnRate: 80,
+  levelScore: 0,
+  levelTarget: 200,
+  keys: {}
+};
+
+export const domElements = {
+  canvas: null,
+  ctx: null,
+  overlay: null,
+  olTitle: null,
+  olBody: null,
+  olScore: null,
+  olPress: null,
+  scoreEl: null,
+  levelEl: null,
+  livesEl: null,
+};
