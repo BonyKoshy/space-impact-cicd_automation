@@ -9,14 +9,14 @@ export function setupInput() {
     if (e.code === 'Space') {
       e.preventDefault();
       // H-3: Don't auto-start from menu via Space to prevent bypassing selection
-      if (gameState.state === 'gameover') startGame(1, true);
-      else if (gameState.state === 'dead') respawn();
+      if (gameState.state === 'gameover') {startGame(1, true);}
+      else if (gameState.state === 'dead') {respawn();}
     }
     if (e.code === 'Escape' && gameState.state === 'playing') {
       e.preventDefault();
       toggleQuitModal();
     }
-    if (e.code === 'ArrowUp' || e.code === 'ArrowDown') e.preventDefault();
+    if (e.code === 'ArrowUp' || e.code === 'ArrowDown') {e.preventDefault();}
   });
   
   document.addEventListener('keyup', e => { 
@@ -40,10 +40,10 @@ export function setupInput() {
       gameState.keys['ArrowRight'] = false;
 
       if (data.direction) {
-        if (data.direction.y === 'up') gameState.keys['ArrowUp'] = true;
-        if (data.direction.y === 'down') gameState.keys['ArrowDown'] = true;
-        if (data.direction.x === 'left') gameState.keys['ArrowLeft'] = true;
-        if (data.direction.x === 'right') gameState.keys['ArrowRight'] = true;
+        if (data.direction.y === 'up') {gameState.keys['ArrowUp'] = true;}
+        if (data.direction.y === 'down') {gameState.keys['ArrowDown'] = true;}
+        if (data.direction.x === 'left') {gameState.keys['ArrowLeft'] = true;}
+        if (data.direction.x === 'right') {gameState.keys['ArrowRight'] = true;}
       }
     });
 
@@ -59,9 +59,9 @@ export function setupInput() {
   if (btnFire) {
     btnFire.addEventListener('pointerdown', () => {
       // H-3: Only trigger start/respawn if not in menu (menu has its own buttons)
-      if (gameState.state === 'gameover') startGame(1, true);
-      else if (gameState.state === 'dead') respawn();
-      else if (gameState.state === 'playing') gameState.keys['Space'] = true;
+      if (gameState.state === 'gameover') {startGame(1, true);}
+      else if (gameState.state === 'dead') {respawn();}
+      else if (gameState.state === 'playing') {gameState.keys['Space'] = true;}
     });
     btnFire.addEventListener('pointerup', () => { gameState.keys['Space'] = false; });
   }

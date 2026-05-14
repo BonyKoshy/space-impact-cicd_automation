@@ -3,7 +3,9 @@ import { playShootSound } from '../audio.js';
 
 export function shoot() {
   const p = gameState.player;
-  if (!p || p.shootCooldown > 0) return;
+  if (!p || p.shootCooldown > 0) {
+    return;
+  }
   
   playShootSound();
   

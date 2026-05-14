@@ -30,13 +30,13 @@ document.addEventListener('DOMContentLoaded', () => {
   // H-6: Safe localStorage access at runtime
   try {
     const savedHi = localStorage.getItem('spaceImpactHiScore');
-    if (savedHi) gameState.hiScore = parseInt(savedHi, 10);
+    if (savedHi) {gameState.hiScore = parseInt(savedHi, 10);}
   } catch (e) {
     console.warn('LocalStorage access failed:', e);
   }
 
   // Sync initial hi-score into HUD immediately
-  if (domElements.hiscoreEl) domElements.hiscoreEl.textContent = gameState.hiScore;
+  if (domElements.hiscoreEl) {domElements.hiscoreEl.textContent = gameState.hiScore;}
 
   function resize() {
     const wrapper = document.getElementById('game-wrapper');
@@ -97,7 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.getElementById('btn-quit-yes').addEventListener('click', () => {
     const modal = document.getElementById('quit-modal');
-    if (modal) modal.classList.add('hidden');
+    if (modal) {modal.classList.add('hidden');}
     gameState.paused = false;
     gameState.state = 'menu';
     // Reset core state so the background game is clean
@@ -125,7 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
       draw(domElements.ctx);
       rafId = requestAnimationFrame(loop);
     }
-    if (rafId) cancelAnimationFrame(rafId);
+    if (rafId) {cancelAnimationFrame(rafId);}
     loop();
   });
 });

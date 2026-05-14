@@ -15,12 +15,16 @@ export function preloadAssets(onComplete) {
     const img = new Image();
     img.onload = () => {
       loaded++;
-      if (loaded === toLoad.length) onComplete();
+      if (loaded === toLoad.length) {
+        onComplete();
+      }
     };
     img.onerror = () => {
       console.error(`Failed to load asset: ${asset.name} (${asset.src})`);
       loaded++; // Still increment to prevent permanent loading hang
-      if (loaded === toLoad.length) onComplete();
+      if (loaded === toLoad.length) {
+        onComplete();
+      }
     };
     img.src = asset.src;
     sprites[asset.name] = img;

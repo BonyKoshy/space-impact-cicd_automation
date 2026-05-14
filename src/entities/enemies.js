@@ -30,12 +30,18 @@ export function spawnEnemy() {
   let type = pool[0];
   for (let i = 0; i < pool.length; i++) {
     r -= weights[i];
-    if (r <= 0) { type = pool[i]; break; }
+    if (r <= 0) {
+      type = pool[i];
+      break;
+    }
   }
   const t = { ...type };
   const pattern = Math.random();
-  let vy = 0, phase = Math.random() * Math.PI * 2;
-  if (pattern < 0.3) vy = (Math.random() - 0.5) * 1.5; // diagonal
+  let vy = 0;
+  const phase = Math.random() * Math.PI * 2;
+  if (pattern < 0.3) {
+    vy = (Math.random() - 0.5) * 1.5; // diagonal
+  }
   const y = Math.random() * (H - t.h - 10) + 5;
   gameState.enemies.push({
     ...t,
@@ -63,9 +69,13 @@ export function drawEnemy(ctx, e) {
     ctx.fillRect(x, y, e.w, e.h);
   } else {
     let sprite = sprites.scout;
-    if (e.isBoss) sprite = sprites.boss;
-    else if (e.id === 'cruiser') sprite = sprites.cruiser;
-    else if (e.id === 'fighter') sprite = sprites.fighter;
+    if (e.isBoss) {
+      sprite = sprites.boss;
+    } else if (e.id === 'cruiser') {
+      sprite = sprites.cruiser;
+    } else if (e.id === 'fighter') {
+      sprite = sprites.fighter;
+    }
 
     const scale = e.isBoss ? 2.0 : 1.5;
     const sw = e.w * scale;
@@ -93,5 +103,7 @@ export function drawEnemy(ctx, e) {
   
   ctx.restore();
   
-  if (e.hitFlash > 0) e.hitFlash--;
+  if (e.hitFlash > 0) {
+    e.hitFlash--;
+  }
 }

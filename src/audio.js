@@ -9,7 +9,9 @@ function getAudioCtx() {
 
 function playSound(type, freq, freq2, duration, vol = 0.1) {
   const ctx = getAudioCtx();
-  if (ctx.state === 'suspended') ctx.resume();
+  if (ctx.state === 'suspended') {
+    ctx.resume();
+  }
   
   const osc = ctx.createOscillator();
   const gain = ctx.createGain();

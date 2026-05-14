@@ -15,10 +15,10 @@ import { playStartSound, playLevelUpSound, playPowerupSound } from './audio.js';
 import { rectsOverlap } from './utils.js';
 
 export function updateHUD() {
-  if (domElements.scoreEl) domElements.scoreEl.textContent = gameState.score;
-  if (domElements.levelEl) domElements.levelEl.textContent = gameState.level;
-  if (domElements.livesEl) domElements.livesEl.innerHTML = '♥'.repeat(gameState.lives) || '—';
-  if (domElements.hiscoreEl) domElements.hiscoreEl.textContent = gameState.hiScore;
+  if (domElements.scoreEl) {domElements.scoreEl.textContent = gameState.score;}
+  if (domElements.levelEl) {domElements.levelEl.textContent = gameState.level;}
+  if (domElements.livesEl) {domElements.livesEl.innerHTML = '♥'.repeat(gameState.lives) || '—';}
+  if (domElements.hiscoreEl) {domElements.hiscoreEl.textContent = gameState.hiScore;}
 }
 
 export function startGame(startLevel = 1, competitive = true) {
@@ -41,7 +41,7 @@ export function startGame(startLevel = 1, competitive = true) {
   gameState.bossActive = false;
   gameState.state = 'playing';
   
-  if (domElements.overlay) domElements.overlay.classList.add('hidden');
+  if (domElements.overlay) {domElements.overlay.classList.add('hidden');}
   updateHUD();
   playStartSound();
 }
@@ -55,7 +55,7 @@ export function respawn() {
   gameState.powerups = [];
   gameState.state = 'playing';
   
-  if (domElements.overlay) domElements.overlay.classList.add('hidden');
+  if (domElements.overlay) {domElements.overlay.classList.add('hidden');}
 }
 
 export function playerDied() {
@@ -80,9 +80,9 @@ export function playerDied() {
     domElements.olBody.innerHTML = '';
     domElements.olPress.textContent = '';
     // M-11: Re-show the main menu using global state references
-    if (domElements.menuMain) domElements.menuMain.classList.remove('hidden');
-    if (domElements.menuControls) domElements.menuControls.classList.add('hidden');
-    if (domElements.controlsFooter) domElements.controlsFooter.classList.remove('hidden');
+    if (domElements.menuMain) {domElements.menuMain.classList.remove('hidden');}
+    if (domElements.menuControls) {domElements.menuControls.classList.add('hidden');}
+    if (domElements.controlsFooter) {domElements.controlsFooter.classList.remove('hidden');}
   } else {
     gameState.state = 'dead';
     domElements.overlay.classList.remove('hidden');
@@ -94,8 +94,8 @@ export function playerDied() {
     domElements.olBody.innerHTML = '';
     domElements.olPress.textContent = 'PRESS SPACE TO CONTINUE';
     // M-11: Hide the mode selection using global state references
-    if (domElements.menuMain) domElements.menuMain.classList.add('hidden');
-    if (domElements.controlsFooter) domElements.controlsFooter.classList.add('hidden');
+    if (domElements.menuMain) {domElements.menuMain.classList.add('hidden');}
+    if (domElements.controlsFooter) {domElements.controlsFooter.classList.add('hidden');}
   }
 }
 
@@ -108,24 +108,24 @@ export function update() {
     updateStars();
   }
 
-  if (gameState.state !== 'playing') return;
-  if (gameState.paused) return; // Frozen while quit modal is open
+  if (gameState.state !== 'playing') {return;}
+  if (gameState.paused) {return;} // Frozen while quit modal is open
 
   const p = gameState.player;
-  if (gameState.keys['ArrowUp'] || gameState.keys['KeyW']) p.y -= p.speed;
-  if (gameState.keys['ArrowDown'] || gameState.keys['KeyS']) p.y += p.speed;
-  if (gameState.keys['ArrowLeft'] || gameState.keys['KeyA']) p.x -= p.speed * 0.7;
-  if (gameState.keys['ArrowRight'] || gameState.keys['KeyD']) p.x += p.speed * 0.7;
+  if (gameState.keys['ArrowUp'] || gameState.keys['KeyW']) {p.y -= p.speed;}
+  if (gameState.keys['ArrowDown'] || gameState.keys['KeyS']) {p.y += p.speed;}
+  if (gameState.keys['ArrowLeft'] || gameState.keys['KeyA']) {p.x -= p.speed * 0.7;}
+  if (gameState.keys['ArrowRight'] || gameState.keys['KeyD']) {p.x += p.speed * 0.7;}
   p.x = Math.max(0, Math.min(W - p.w, p.x));
   p.y = Math.max(0, Math.min(H - p.h, p.y));
 
-  if (p.shootCooldown > 0) p.shootCooldown--;
-  if (gameState.keys['Space'] || gameState.keys['KeyZ']) shoot();
+  if (p.shootCooldown > 0) {p.shootCooldown--;}
+  if (gameState.keys['Space'] || gameState.keys['KeyZ']) {shoot();}
 
-  if (p.invincible > 0) p.invincible--;
-  if (p.rapidFire > 0) p.rapidFire--;
-  if (p.triShot > 0) p.triShot--;
-  if (p.shield > 0) p.shield--;
+  if (p.invincible > 0) {p.invincible--;}
+  if (p.rapidFire > 0) {p.rapidFire--;}
+  if (p.triShot > 0) {p.triShot--;}
+  if (p.shield > 0) {p.shield--;}
 
   // Bullets
   gameState.bullets = gameState.bullets.filter(b => b.x < W + 10);
@@ -145,17 +145,17 @@ export function update() {
   gameState.enemies = gameState.enemies.filter(e => e.x > -50);
   gameState.enemies.forEach(e => {
     if (e.isBoss) {
-      if (e.x > W - e.w - 10) e.x += e.vx; // Move into view
+      if (e.x > W - e.w - 10) {e.x += e.vx;} // Move into view
       else {
         e.y += e.vy;
-        if (e.y <= 0 || e.y + e.h >= H) e.vy *= -1; // Bounce
+        if (e.y <= 0 || e.y + e.h >= H) {e.vy *= -1;} // Bounce
       }
     } else {
       e.x += e.vx;
-      if (e.wave) e.y = e.startY + Math.sin(gameState.frame * 0.04 + e.phase) * 30;
-      else e.y += e.vy;
+      if (e.wave) {e.y = e.startY + Math.sin(gameState.frame * 0.04 + e.phase) * 30;}
+      else {e.y += e.vy;}
       e.y = Math.max(2, Math.min(H - e.h - 2, e.y));
-      if (e.startY !== undefined && !e.wave) e.startY = e.y;
+      if (e.startY !== undefined && !e.wave) {e.startY = e.y;}
     }
 
     // Enemy shooting
@@ -220,7 +220,7 @@ export function update() {
     gameState.enemyBullets = gameState.enemyBullets.filter(b => !b.dead);
 
     // H-5: Check state again before processing enemy collisions
-    if (gameState.state !== 'playing') return;
+    if (gameState.state !== 'playing') {return;}
 
     // Enemy vs player collision
     if (gameState.state === 'playing') {
@@ -239,9 +239,9 @@ export function update() {
   gameState.powerups.forEach(pu => {
     if (rectsOverlap(p, { x: pu.x, y: pu.y, w: 14, h: 14 })) {
       pu.dead = true;
-      if (pu.type === 'rapid') p.rapidFire = 300;
-      else if (pu.type === 'triple') p.triShot = 300;
-      else if (pu.type === 'shield') p.shield = 400;
+      if (pu.type === 'rapid') {p.rapidFire = 300;}
+      else if (pu.type === 'triple') {p.triShot = 300;}
+      else if (pu.type === 'shield') {p.shield = 400;}
       else if (pu.type === 'life' && gameState.lives < 5) { gameState.lives++; updateHUD(); }
       playPowerupSound();
       explode(pu.x + 7, pu.y + 7, 10, PU_COLORS[pu.type]);
@@ -274,7 +274,7 @@ export function draw(ctx) {
     const dy = (Math.random() - 0.5) * gameState.shake;
     ctx.translate(dx, dy);
     gameState.shake *= 0.9;
-    if (gameState.shake < 0.5) gameState.shake = 0;
+    if (gameState.shake < 0.5) {gameState.shake = 0;}
   }
 
   ctx.clearRect(0, 0, W, H);
@@ -289,15 +289,16 @@ export function draw(ctx) {
 
   if (gameState.state === 'playing' || gameState.state === 'dead' || gameState.state === 'gameover') {
     drawBullets(ctx);
-    if (gameState.state === 'playing') drawPlayer(ctx);
+    if (gameState.state === 'playing') {drawPlayer(ctx);}
   }
 
   // Power-up status bar
   if (gameState.state === 'playing') {
     const p = gameState.player;
-    let px = 4, py = H - 6;
+    let px = 4;
+    const py = H - 6;
     const drawStatus = (label, time, col) => {
-      if (time <= 0) return;
+      if (time <= 0) {return;}
       ctx.fillStyle = col;
       ctx.font = '6px monospace';
       ctx.fillText(`${label}:${Math.ceil(time / 60)}s`, px, py);

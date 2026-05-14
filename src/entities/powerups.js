@@ -2,7 +2,7 @@ import { PU_TYPES, PU_COLORS, PU_LABELS } from '../config.js';
 import { gameState } from '../state.js';
 
 export function spawnPowerup(x, y) {
-  if (Math.random() > 0.22) return;
+  if (Math.random() > 0.22) {return;}
   const type = PU_TYPES[Math.floor(Math.random() * PU_TYPES.length)];
   gameState.powerups.push({ x, y, type, vy: (Math.random() - 0.5) * 0.6, phase: Math.random() * Math.PI * 2 });
 }

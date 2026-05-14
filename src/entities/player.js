@@ -19,8 +19,8 @@ import { sprites } from '../assets.js';
 
 export function drawPlayer(ctx) {
   const p = gameState.player;
-  if (!p) return;
-  if (p.invincible > 0 && Math.floor(gameState.frame / 4) % 2 === 0) return;
+  if (!p) {return;}
+  if (p.invincible > 0 && Math.floor(gameState.frame / 4) % 2 === 0) {return;}
 
   const x = Math.round(p.x), y = Math.round(p.y);
 

@@ -11,6 +11,7 @@ export default [
         window: "readonly",
         Math: "readonly",
         requestAnimationFrame: "readonly",
+        cancelAnimationFrame: "readonly",
         setTimeout: "readonly",
         localStorage: "readonly",
         parseInt: "readonly",
