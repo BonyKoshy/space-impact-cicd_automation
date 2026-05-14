@@ -96,8 +96,13 @@ export function playerDied() {
 }
 
 export function update() {
-  gameState.frame++;
-  updateStars();
+  // H-4: Modulo frame to prevent precision loss in Math.sin over long sessions
+  gameState.frame = (gameState.frame + 1) % 60000;
+  
+  // H-7: Only update stars if the game is actually running or in menu (not paused)
+  if (!gameState.paused) {
+    updateStars();
+  }
 
   if (gameState.state !== 'playing') return;
   if (gameState.paused) return; // Frozen while quit modal is open
@@ -209,6 +214,9 @@ export function update() {
       }
     });
     gameState.enemyBullets = gameState.enemyBullets.filter(b => !b.dead);
+
+    // H-5: Check state again before processing enemy collisions
+    if (gameState.state !== 'playing') return;
 
     // Enemy vs player collision
     if (gameState.state === 'playing') {

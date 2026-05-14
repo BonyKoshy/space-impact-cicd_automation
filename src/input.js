@@ -8,7 +8,8 @@ export function setupInput() {
     gameState.keys[e.code] = true;
     if (e.code === 'Space') {
       e.preventDefault();
-      if (gameState.state === 'menu' || gameState.state === 'gameover') startGame(1, true);
+      // H-3: Don't auto-start from menu via Space to prevent bypassing selection
+      if (gameState.state === 'gameover') startGame(1, true);
       else if (gameState.state === 'dead') respawn();
     }
     if (e.code === 'Escape' && gameState.state === 'playing') {
@@ -57,9 +58,10 @@ export function setupInput() {
   const btnFire = document.getElementById('btn-fire');
   if (btnFire) {
     btnFire.addEventListener('pointerdown', () => {
-      if (gameState.state === 'menu' || gameState.state === 'gameover') startGame();
+      // H-3: Only trigger start/respawn if not in menu (menu has its own buttons)
+      if (gameState.state === 'gameover') startGame(1, true);
       else if (gameState.state === 'dead') respawn();
-      else gameState.keys['Space'] = true;
+      else if (gameState.state === 'playing') gameState.keys['Space'] = true;
     });
     btnFire.addEventListener('pointerup', () => { gameState.keys['Space'] = false; });
   }

@@ -1,7 +1,7 @@
 export const gameState = {
   state: 'menu', // menu | playing | dead | gameover
   score: 0,
-  hiScore: parseInt(localStorage.getItem('spaceImpactHiScore') || '0', 10),
+  hiScore: 0,
   lives: 3,
   level: 1,
   frame: 0,

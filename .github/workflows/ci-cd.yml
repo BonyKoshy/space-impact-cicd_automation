@@ -1,4 +1,4 @@
-name: 🚀 Space Impact CI/CD Pipeline
+name: 🚀 Space Impact Robust CI/CD Pipeline
 
 on:
   push:
@@ -6,18 +6,14 @@ on:
   pull_request:
     branches: [ "main" ]
 
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-
 jobs:
 
-  # ============================
-  # 🧪 CI PHASE (LINT & CHECK)
-  # ============================
-  ci:
-    name: 🧪 CI - Code Validation
+  # ==========================================
+  # 1. 🔍 VALIDATION (LINT & FORMAT)
+  # ==========================================
+  validate:
+    name: 🔍 Code Validation
     runs-on: ubuntu-latest
-
     steps:
       - name: 📥 Checkout Code
         uses: actions/checkout@v4
@@ -26,9 +22,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: 'npm'
 
       - name: 📦 Install Dependencies
-        run: npm install
+        run: npm ci
 
       - name: 🔍 Run ESLint
         run: npm run lint:js
@@ -39,14 +36,13 @@ jobs:
       - name: 🎨 Check CSS
         run: npm run lint:css
 
-  # ============================
-  # 🧪 TEST PHASE
-  # ============================
-  test:
-    name: 🧪 Unit Tests
+  # ==========================================
+  # 2. 🔍 DEPENDENCY SCAN (SCA)
+  # ==========================================
+  sca:
+    name: 🛡️ Dependency Scan (SCA)
     runs-on: ubuntu-latest
-    needs: ci
-
+    needs: validate
     steps:
       - name: 📥 Checkout Code
         uses: actions/checkout@v4
@@ -55,21 +51,64 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: 'npm'
+
+      - name: 🔍 Run npm audit
+        run: npm audit --audit-level=high
+
+  # ==========================================
+  # 3. 🧪 UNIT TESTING
+  # ==========================================
+  test:
+    name: 🧪 Unit Tests
+    runs-on: ubuntu-latest
+    needs: sca
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
 
       - name: 📦 Install Dependencies
-        run: npm install
+        run: npm ci
 
       - name: 🧪 Run Vitest
         run: npm run test
 
-  # ============================
-  # 📦 BUILD PHASE
-  # ============================
+  # ==========================================
+  # 4. 🛡️ STATIC ANALYSIS (SAST)
+  # ==========================================
+  sast:
+    name: 🛡️ Static Analysis (SAST)
+    runs-on: ubuntu-latest
+    needs: test
+    permissions:
+      security-events: write
+      actions: read
+      contents: read
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+
+      - name: 🛡️ Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: javascript-typescript
+
+      - name: 🛡️ Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+
+  # ==========================================
+  # 5. 📦 BUILD APPLICATION
+  # ==========================================
   build:
     name: 📦 Build Application
     runs-on: ubuntu-latest
-    needs: test
-
+    needs: sast
     steps:
       - name: 📥 Checkout Code
         uses: actions/checkout@v4
@@ -78,10 +117,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: 'npm'
 
       - name: 📦 Prepare Build
         run: |
-          npm install
+          npm ci
           npm run build
 
       - name: 📤 Upload Build
@@ -90,20 +130,44 @@ jobs:
           name: space-impact-build
           path: dist
 
-  # ============================
+  # ==========================================
+  # 6. 🧪 INTEGRATION TESTING (SMOKE TEST)
+  # ==========================================
+  integration:
+    name: 🧪 Integration Testing
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: 📥 Download Build
+        uses: actions/download-artifact@v4
+        with:
+          name: space-impact-build
+          path: dist
+
+      - name: 🧪 Smoke Test Artifacts
+        run: |
+          echo "🔍 Verifying build integrity..."
+          if [ ! -f dist/index.html ]; then
+            echo "❌ CRITICAL: index.html missing from build!"
+            exit 1
+          fi
+          if [ ! -d dist/assets ] && [ ! -f dist/main.js ]; then
+            echo "⚠️ Warning: Assets directory or main script missing."
+          fi
+          echo "✅ Build artifact is valid and contains entry points."
+
+  # ==========================================
   # 🏷️ RELEASE PHASE
-  # ============================
+  # ==========================================
   release:
     name: 🏷️ Semantic Release
     runs-on: ubuntu-latest
-    needs: test
+    needs: integration
     if: github.ref == 'refs/heads/main'
-
     permissions:
       contents: write 
       issues: write 
       pull-requests: write 
-
     steps:
       - name: 📥 Checkout Code
         uses: actions/checkout@v4
@@ -114,32 +178,30 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: 'npm'
 
       - name: 📦 Install Dependencies
-        run: npm install
+        run: npm ci
 
       - name: 🏷️ Run Semantic Release
         uses: cycjimmy/semantic-release-action@v4
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  # ============================
-  # 🚀 CD PHASE (DEPLOY)
-  # ============================
+  # ==========================================
+  # 7. 🚀 DEPLOYMENT
+  # ==========================================
   deploy:
     name: 🚀 Deploy Application
     runs-on: ubuntu-latest
-    needs: build
+    needs: release
     if: github.ref == 'refs/heads/main'
-
     permissions:
       pages: write
       id-token: write
-
     environment:
       name: github-pages
       url: ${{ steps.deploy.outputs.page_url }}
-
     steps:
       - name: 📥 Download Build
         uses: actions/download-artifact@v4
@@ -148,7 +210,7 @@ jobs:
           path: dist
 
       - name: ⚙️ Setup Pages
-        uses: actions/configure-pages@v4
+        uses: actions/configure-pages@v5
 
       - name: 📤 Upload to Pages
         uses: actions/upload-pages-artifact@v3
@@ -158,9 +220,3 @@ jobs:
       - name: 🚀 Deploy
         id: deploy
         uses: actions/deploy-pages@v4
-
-      - name: 🌐 Show Live URL
-        run: |
-          echo "🎉 Deployment Successful!"
-          echo "🌍 Website URL:"
-          echo "${{ steps.deploy.outputs.page_url }}"

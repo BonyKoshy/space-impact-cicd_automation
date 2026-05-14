@@ -1,25 +1,33 @@
-const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+let audioCtx;
+
+function getAudioCtx() {
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  return audioCtx;
+}
 
 function playSound(type, freq, freq2, duration, vol = 0.1) {
-  if (audioCtx.state === 'suspended') audioCtx.resume();
+  const ctx = getAudioCtx();
+  if (ctx.state === 'suspended') ctx.resume();
   
-  const osc = audioCtx.createOscillator();
-  const gain = audioCtx.createGain();
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
   
   osc.type = type;
-  osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+  osc.frequency.setValueAtTime(freq, ctx.currentTime);
   if (freq2) {
-    osc.frequency.exponentialRampToValueAtTime(freq2, audioCtx.currentTime + duration);
+    osc.frequency.exponentialRampToValueAtTime(freq2, ctx.currentTime + duration);
   }
   
-  gain.gain.setValueAtTime(vol, audioCtx.currentTime);
-  gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+  gain.gain.setValueAtTime(vol, ctx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + duration);
   
   osc.connect(gain);
-  gain.connect(audioCtx.destination);
+  gain.connect(ctx.destination);
   
   osc.start();
-  osc.stop(audioCtx.currentTime + duration);
+  osc.stop(ctx.currentTime + duration);
 }
 
 export function playShootSound() {

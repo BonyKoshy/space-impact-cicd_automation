@@ -24,6 +24,14 @@ document.addEventListener('DOMContentLoaded', () => {
   domElements.canvas.width = W; 
   domElements.canvas.height = H;
 
+  // H-6: Safe localStorage access at runtime
+  try {
+    const savedHi = localStorage.getItem('spaceImpactHiScore');
+    if (savedHi) gameState.hiScore = parseInt(savedHi, 10);
+  } catch (e) {
+    console.warn('LocalStorage access failed:', e);
+  }
+
   // Sync initial hi-score into HUD immediately
   if (domElements.hiscoreEl) domElements.hiscoreEl.textContent = gameState.hiScore;
 

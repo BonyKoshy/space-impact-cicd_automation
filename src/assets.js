@@ -5,6 +5,7 @@ export function preloadAssets(onComplete) {
     { name: 'player', src: './assets/player_ship.png' },
     { name: 'scout', src: './assets/scout.png' },
     { name: 'fighter', src: './assets/fighter.png' },
+    { name: 'bomber', src: './assets/bomber.png' },
     { name: 'cruiser', src: './assets/cruiser.png' },
     { name: 'boss', src: './assets/boss.png' }
   ];
@@ -14,6 +15,11 @@ export function preloadAssets(onComplete) {
     const img = new Image();
     img.onload = () => {
       loaded++;
+      if (loaded === toLoad.length) onComplete();
+    };
+    img.onerror = () => {
+      console.error(`Failed to load asset: ${asset.name} (${asset.src})`);
+      loaded++; // Still increment to prevent permanent loading hang
       if (loaded === toLoad.length) onComplete();
     };
     img.src = asset.src;
