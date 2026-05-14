@@ -19,7 +19,8 @@ export const gameState = {
   spawnRate: 80,
   levelScore: 0,
   levelTarget: 200,
-  keys: {}
+  keys: {},
+  competitiveMode: true
 };
 
 export const domElements = {
@@ -33,4 +34,5 @@ export const domElements = {
   scoreEl: null,
   levelEl: null,
   livesEl: null,
+  hiscoreEl: null,
 };

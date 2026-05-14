@@ -1,10 +1,12 @@
 import './style.css';
 import { W, H } from './config.js';
-import { domElements } from './state.js';
+import { domElements, gameState } from './state.js';
 import { setupInput } from './input.js';
 import { initStars } from './entities/stars.js';
-import { update, draw } from './game.js';
+import { update, draw, startGame } from './game.js';
 import { preloadAssets } from './assets.js';
+
+import { toggleQuitModal } from './ui.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   domElements.canvas = document.getElementById('c');
@@ -17,9 +19,13 @@ document.addEventListener('DOMContentLoaded', () => {
   domElements.scoreEl = document.getElementById('score-display');
   domElements.levelEl = document.getElementById('level-display');
   domElements.livesEl = document.getElementById('lives-display');
+  domElements.hiscoreEl = document.getElementById('hiscore-display');
 
   domElements.canvas.width = W; 
   domElements.canvas.height = H;
+
+  // Sync initial hi-score into HUD immediately
+  if (domElements.hiscoreEl) domElements.hiscoreEl.textContent = gameState.hiScore;
 
   function resize() {
     const wrapper = document.getElementById('game-wrapper');
@@ -27,8 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const rect = wrapper.getBoundingClientRect();
     const scaleX = window.innerWidth / rect.width;
     const scaleY = window.innerHeight / rect.height;
-    // For retro games, we want to scale to fit the screen without stretching
-    const scale = Math.min(scaleX, scaleY) * 0.98; // 98% to leave a tiny margin
+    const scale = Math.min(scaleX, scaleY) * 0.98;
     wrapper.style.transform = `scale(${scale})`;
     wrapper.style.transformOrigin = 'center center';
   }
@@ -37,20 +42,72 @@ document.addEventListener('DOMContentLoaded', () => {
 
   setupInput();
 
-  function showMenu() {
+  // ─── Splash Screen Navigation ───
+  const menuMain = document.getElementById('menu-main');
+  const menuControls = document.getElementById('menu-controls');
+
+  function showMainMenu() {
     domElements.olTitle.textContent = 'SPACE IMPACT';
     domElements.olScore.style.display = 'none';
-    domElements.olBody.innerHTML = 'ARROW KEYS — move<br>SPACE — fire<br><br>Collect power-ups!<br>Survive as long as you can!';
-    domElements.olPress.textContent = 'PRESS SPACE TO START';
+    domElements.olBody.innerHTML = '';
+    domElements.olPress.textContent = '';
+    menuMain.classList.remove('hidden');
+    menuControls.classList.add('hidden');
+    domElements.overlay.classList.remove('hidden');
   }
 
+  // Competitive Mode — starts at Level 1, tracks hi-score
+  document.getElementById('btn-competitive').addEventListener('click', () => {
+    startGame(1, true);
+  });
+
+  // Level Select (1–5) — no hi-score tracking
+  [1, 2, 3, 4, 5].forEach(lvl => {
+    document.getElementById(`btn-lvl-${lvl}`).addEventListener('click', () => {
+      startGame(lvl, false);
+    });
+  });
+
+  // Controls screen toggle
+  document.getElementById('btn-controls-open').addEventListener('click', () => {
+    menuMain.classList.add('hidden');
+    menuControls.classList.remove('hidden');
+  });
+
+  document.getElementById('btn-controls-back').addEventListener('click', () => {
+    menuControls.classList.add('hidden');
+    menuMain.classList.remove('hidden');
+  });
+
+  // Quit Modal
+  document.getElementById('btn-quit-no').addEventListener('click', () => {
+    toggleQuitModal(); // Just resumes (hides modal, unpauses)
+  });
+
+  document.getElementById('btn-quit-yes').addEventListener('click', () => {
+    const modal = document.getElementById('quit-modal');
+    if (modal) modal.classList.add('hidden');
+    gameState.paused = false;
+    gameState.state = 'menu';
+    // Reset core state so the background game is clean
+    gameState.enemies = [];
+    gameState.bullets = [];
+    gameState.enemyBullets = [];
+    gameState.powerups = [];
+    gameState.particles = [];
+    gameState.player = null;
+    gameState.bossActive = false;
+    showMainMenu();
+  });
+
+  // ─── Init ───
   initStars();
-  
   domElements.olTitle.textContent = 'LOADING...';
-  domElements.olBody.innerHTML = 'Preloading retro assets';
+  domElements.olBody.innerHTML = 'Preloading retro assets...';
+  menuMain.classList.add('hidden');
 
   preloadAssets(() => {
-    showMenu();
+    showMainMenu();
     function loop() {
       update();
       draw(domElements.ctx);

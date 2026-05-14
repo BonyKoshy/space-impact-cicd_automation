@@ -1,14 +1,19 @@
 import nipplejs from 'nipplejs';
 import { gameState } from './state.js';
 import { startGame, respawn } from './game.js';
+import { toggleQuitModal } from './ui.js';
 
 export function setupInput() {
   document.addEventListener('keydown', e => {
     gameState.keys[e.code] = true;
     if (e.code === 'Space') {
       e.preventDefault();
-      if (gameState.state === 'menu' || gameState.state === 'gameover') startGame();
+      if (gameState.state === 'menu' || gameState.state === 'gameover') startGame(1, true);
       else if (gameState.state === 'dead') respawn();
+    }
+    if (e.code === 'Escape' && gameState.state === 'playing') {
+      e.preventDefault();
+      toggleQuitModal();
     }
     if (e.code === 'ArrowUp' || e.code === 'ArrowDown') e.preventDefault();
   });

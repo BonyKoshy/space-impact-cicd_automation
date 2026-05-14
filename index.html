@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Space IMPACT</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&display=swap" rel="stylesheet">
 </head>
 <body>
 
@@ -11,21 +14,92 @@
   <div id="hud">
     <div>SCORE: <span id="score-display">0</span></div>
     <div>LV: <span id="level-display">1</span></div>
+    <div>HI: <span id="hiscore-display">0</span></div>
     <div class="lives">LIVES: <span id="lives-display">&#9829;&#9829;&#9829;</span></div>
   </div>
 
   <canvas id="c"></canvas>
 
   <div id="overlay">
-    <h1 id="ol-title">SPACE IMPACT</h1>
+    <!-- CRT scanlines layer -->
+    <div id="crt-lines"></div>
+
+    <div id="ol-title-wrap">
+      <span class="title-star">&#9733;</span>
+      <h1 id="ol-title">SPACE IMPACT</h1>
+      <span class="title-star">&#9733;</span>
+    </div>
     <div class="big-score" id="ol-score" style="display:none"></div>
-    <p id="ol-body">Use ARROW KEYS to move<br>SPACE to shoot<br>Collect power-ups!</p>
-    <div class="blink" id="ol-press">PRESS SPACE TO START</div>
+
+    <!-- Main Menu -->
+    <div id="menu-main">
+      <div id="mode-row">
+
+        <!-- Competitive -->
+        <div class="mode-card" id="card-competitive">
+          <img src="./assets/trophy.png" alt="Trophy" class="mode-icon-img">
+          <div class="mode-title">COMPETITIVE</div>
+          <div class="mode-desc">Start at LV1.<br>Climb to LV5+.<br>Score tracked.</div>
+          <button class="menu-btn primary-btn" id="btn-competitive">PLAY</button>
+        </div>
+
+        <div class="mode-divider">|</div>
+
+        <!-- Arcade -->
+        <div class="mode-card" id="card-arcade">
+          <img src="./assets/controller.png" alt="Controller" class="mode-icon-img">
+          <div class="mode-title">ARCADE</div>
+          <div class="mode-desc">Jump to any level.<br>No score saved.</div>
+          <div id="level-btns">
+            <button class="lvl-btn" id="btn-lvl-1">1</button>
+            <button class="lvl-btn" id="btn-lvl-2">2</button>
+            <button class="lvl-btn" id="btn-lvl-3">3</button>
+            <button class="lvl-btn" id="btn-lvl-4">4</button>
+            <button class="lvl-btn" id="btn-lvl-5">5</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Controls button pinned to bottom of overlay -->
+    <div id="controls-footer">
+      <button class="ghost-btn" id="btn-controls-open">&#9881; CONTROLS</button>
+    </div>
+
+    <!-- Controls Screen -->
+    <div id="menu-controls" class="hidden">
+      <table class="controls-table">
+        <tr><td>&#11014; / W</td><td>Move Up</td></tr>
+        <tr><td>&#11015; / S</td><td>Move Down</td></tr>
+        <tr><td>&#11013; / A</td><td>Move Left</td></tr>
+        <tr><td>&#10145; / D</td><td>Move Right</td></tr>
+        <tr><td>SPACE / Z</td><td>Fire Laser</td></tr>
+        <tr><td>SPACE</td><td>Start / Respawn</td></tr>
+        <tr><td colspan="2" class="ctrl-mobile">&#128241; Mobile: Joystick + FIRE button</td></tr>
+      </table>
+      <button class="menu-btn secondary-btn" id="btn-controls-back">&#8592; BACK</button>
+    </div>
+
+    <p id="ol-body"></p>
+    <div class="blink" id="ol-press"></div>
   </div>
 
   <div id="mobile-controls">
     <div id="joystick-zone"></div>
     <button class="ctrl-btn" id="btn-fire" style="font-size:9px;padding:18px 22px;">FIRE</button>
+  </div>
+
+  <!-- ESC Quit Modal -->
+  <div id="quit-modal" class="hidden">
+    <div id="quit-box">
+      <p id="quit-title">PAUSED</p>
+      <p id="quit-sub">Quit to main menu?</p>
+      <div id="quit-btns">
+        <button class="menu-btn secondary-btn" id="btn-quit-no">&#8592; RESUME</button>
+        <button class="menu-btn primary-btn" id="btn-quit-yes">QUIT &#8594;</button>
+      </div>
+    </div>
   </div>
 </div>
 

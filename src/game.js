@@ -13,14 +13,17 @@ export function updateHUD() {
   if (domElements.scoreEl) domElements.scoreEl.textContent = gameState.score;
   if (domElements.levelEl) domElements.levelEl.textContent = gameState.level;
   if (domElements.livesEl) domElements.livesEl.innerHTML = '♥'.repeat(gameState.lives) || '—';
+  if (domElements.hiscoreEl) domElements.hiscoreEl.textContent = gameState.hiScore;
 }
 
-export function startGame() {
+export function startGame(startLevel = 1, competitive = true) {
+  gameState.competitiveMode = competitive;
   gameState.score = 0; 
   gameState.lives = 3; 
-  gameState.level = 1;
-  gameState.levelScore = 0; 
-  gameState.levelTarget = 200;
+  gameState.level = startLevel;
+  gameState.levelScore = 0;
+  // Scale levelTarget for where we are starting
+  gameState.levelTarget = Math.round(200 * Math.pow(1.4, startLevel - 1));
   gameState.player = makePlayer();
   gameState.enemies = []; 
   gameState.bullets = []; 
@@ -30,6 +33,7 @@ export function startGame() {
   gameState.spawnTimer = 0; 
   gameState.spawnRate = 80; 
   gameState.frame = 0;
+  gameState.bossActive = false;
   gameState.state = 'playing';
   
   if (domElements.overlay) domElements.overlay.classList.add('hidden');
@@ -56,7 +60,7 @@ export function playerDied() {
   updateHUD();
   
   if (gameState.lives <= 0) {
-    if (gameState.score > gameState.hiScore) {
+    if (gameState.competitiveMode && gameState.score > gameState.hiScore) {
       gameState.hiScore = gameState.score;
       localStorage.setItem('spaceImpactHiScore', gameState.hiScore);
     }
@@ -64,9 +68,17 @@ export function playerDied() {
     domElements.overlay.classList.remove('hidden');
     domElements.olTitle.textContent = 'GAME OVER';
     domElements.olScore.style.display = 'block';
-    domElements.olScore.textContent = `SCORE: ${gameState.score}  HI: ${gameState.hiScore}`;
+    const modeTag = gameState.competitiveMode ? '' : ' (Practice)';
+    domElements.olScore.textContent = `SCORE: ${gameState.score}${modeTag}  HI: ${gameState.hiScore}`;
     domElements.olBody.innerHTML = '';
-    domElements.olPress.textContent = 'PRESS SPACE TO RETRY';
+    domElements.olPress.textContent = '';
+    // Re-show the main menu so player can choose mode/level
+    const menuMain = document.getElementById('menu-main');
+    const menuControls = document.getElementById('menu-controls');
+    const controlsFooter = document.getElementById('controls-footer');
+    if (menuMain) menuMain.classList.remove('hidden');
+    if (menuControls) menuControls.classList.add('hidden');
+    if (controlsFooter) controlsFooter.classList.remove('hidden');
   } else {
     gameState.state = 'dead';
     domElements.overlay.classList.remove('hidden');
@@ -75,6 +87,11 @@ export function playerDied() {
     domElements.olScore.textContent = `LIVES: ${'♥'.repeat(gameState.lives)}`;
     domElements.olBody.innerHTML = '';
     domElements.olPress.textContent = 'PRESS SPACE TO CONTINUE';
+    // Hide the mode selection — this is mid-game, not the main menu
+    const menuMain = document.getElementById('menu-main');
+    const controlsFooter = document.getElementById('controls-footer');
+    if (menuMain) menuMain.classList.add('hidden');
+    if (controlsFooter) controlsFooter.classList.add('hidden');
   }
 }
 
@@ -83,6 +100,7 @@ export function update() {
   updateStars();
 
   if (gameState.state !== 'playing') return;
+  if (gameState.paused) return; // Frozen while quit modal is open
 
   const p = gameState.player;
   if (gameState.keys['ArrowUp'] || gameState.keys['KeyW']) p.y -= p.speed;
@@ -132,7 +150,7 @@ export function update() {
     }
 
     // Enemy shooting
-    if (Math.random() < e.shootChance * (1 + (gameState.level - 1) * 0.3)) {
+    if (e.x > p.x && Math.random() < e.shootChance * (1 + (gameState.level - 1) * 0.3)) {
       const dx = p.x - e.x, dy = (p.y + p.h / 2) - (e.y + e.h / 2);
       const dist = Math.sqrt(dx * dx + dy * dy) || 1;
       const spd = 2.5 + gameState.level * 0.2;
