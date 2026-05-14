@@ -6,8 +6,8 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "lint:js": "eslint src/**/*.js --fix",
-    "lint:css": "stylelint src/**/*.css --fix",
+    "lint:js": "eslint \"src/**/*.js\" --fix",
+    "lint:css": "stylelint \"src/**/*.css\" --fix",
     "lint:html": "htmlhint index.html",
     "test": "vitest run",
     "test:watch": "vitest"
