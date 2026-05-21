@@ -37,4 +37,5 @@ export const domElements = {
   menuMain: null,
   menuControls: null,
   controlsFooter: null,
+  mobileControls: null,
 };

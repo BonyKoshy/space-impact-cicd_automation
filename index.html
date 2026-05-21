@@ -20,12 +20,22 @@
 <link rel="icon" type="image/png" href="./assets/player_ship.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&display=swap" rel="stylesheet">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&display=swap">
+<link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&display=swap" rel="stylesheet"></noscript>
 </head>
 <body>
 
-<div id="game-wrapper">
-  <div id="hud">
+<main id="game-wrapper">
+  <div id="handheld-shell">
+    <div id="shell-header">
+      <div id="power-led"></div>
+      <div id="speaker-grille"><span></span><span></span><span></span></div>
+      <button class="ctrl-btn btn-quit-mobile" id="btn-quit-mobile" aria-label="Quit">&#x2715;</button>
+    </div>
+
+    <div id="screen-container">
+    <div id="hud">
     <div>SCORE: <span id="score-display">0</span></div>
     <div>LV: <span id="level-display">1</span></div>
     <div>HI: <span id="hiscore-display">0</span></div>
@@ -50,20 +60,20 @@
       <div id="mode-row">
 
         <!-- Competitive -->
-        <div class="mode-card" id="card-competitive">
-          <img src="./assets/trophy.png" alt="Trophy" class="mode-icon-img">
+        <div class="mode-card selected" id="card-competitive" data-index="0">
+          <img src="./assets/trophy.png" alt="Trophy" class="mode-icon-img" fetchpriority="high" loading="eager">
           <div class="mode-title">COMPETITIVE</div>
-          <div class="mode-desc">Start at LV1.<br>Climb to LV5+.<br>Score tracked.</div>
+          <div class="mode-desc">Start at LV1. Climb to LV5+. Score tracked.</div>
           <button class="menu-btn primary-btn" id="btn-competitive">PLAY</button>
         </div>
 
         <div class="mode-divider">|</div>
 
         <!-- Arcade -->
-        <div class="mode-card" id="card-arcade">
-          <img src="./assets/controller.png" alt="Controller" class="mode-icon-img">
+        <div class="mode-card" id="card-arcade" data-index="1">
+          <img src="./assets/controller.png" alt="Controller" class="mode-icon-img" fetchpriority="high" loading="eager">
           <div class="mode-title">ARCADE</div>
-          <div class="mode-desc">Jump to any level.<br>No score saved.</div>
+          <div class="mode-desc">Jump to any level. No score saved.</div>
           <div id="level-btns">
             <button class="lvl-btn" id="btn-lvl-1">1</button>
             <button class="lvl-btn" id="btn-lvl-2">2</button>
@@ -90,18 +100,13 @@
         <tr><td>&#10145; / D</td><td>Move Right</td></tr>
         <tr><td>SPACE / Z</td><td>Fire Laser</td></tr>
         <tr><td>SPACE</td><td>Start / Respawn</td></tr>
-        <tr><td colspan="2" class="ctrl-mobile">&#128241; Mobile: Joystick + FIRE button</td></tr>
+        <tr><td colspan="2" class="ctrl-mobile">&#128241; Mobile: D-Pad to navigate, FIRE to select/shoot</td></tr>
       </table>
       <button class="menu-btn secondary-btn" id="btn-controls-back">&#8592; BACK</button>
     </div>
 
     <p id="ol-body"></p>
     <div class="blink" id="ol-press"></div>
-  </div>
-
-  <div id="mobile-controls">
-    <div id="joystick-zone"></div>
-    <button class="ctrl-btn" id="btn-fire">FIRE</button>
   </div>
 
   <!-- ESC Quit Modal -->
@@ -115,7 +120,32 @@
       </div>
     </div>
   </div>
+
+  </div> <!-- End of screen-container -->
+
+  <div id="mobile-controls">
+    <div id="dpad">
+      <div class="d-row"><button class="ctrl-btn d-btn" id="d-up">▲</button></div>
+      <div class="d-row">
+        <button class="ctrl-btn d-btn" id="d-left">◀</button>
+        <div class="d-center"></div>
+        <button class="ctrl-btn d-btn" id="d-right">▶</button>
+      </div>
+      <div class="d-row"><button class="ctrl-btn d-btn" id="d-down">▼</button></div>
+    </div>
+
+    <div id="action-cluster">
+      <button class="ctrl-btn a-btn btn-fire" id="btn-fire">
+        <img src="./assets/fire.png" alt="Fire" class="fire-icon-img">
+      </button>
+    </div>
+  </div>
+  
+  <div id="shell-footer">
+    <div id="brand-logo">SPACE IMPACT <span>PRO</span></div>
+  </div>
 </div>
+</main>
 
 <script type="module" src="./src/main.js"></script>
 </body>

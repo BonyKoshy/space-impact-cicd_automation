@@ -5,7 +5,6 @@ export function preloadAssets(onComplete) {
     { name: 'player', src: './assets/player_ship.png' },
     { name: 'scout', src: './assets/scout.png' },
     { name: 'fighter', src: './assets/fighter.png' },
-    { name: 'bomber', src: './assets/bomber.png' },
     { name: 'cruiser', src: './assets/cruiser.png' },
     { name: 'boss', src: './assets/boss.png' }
   ];

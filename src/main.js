@@ -23,6 +23,8 @@ document.addEventListener('DOMContentLoaded', () => {
   domElements.menuMain = document.getElementById('menu-main');
   domElements.menuControls = document.getElementById('menu-controls');
   domElements.controlsFooter = document.getElementById('controls-footer');
+  domElements.mobileControls = document.getElementById('mobile-controls');
+  domElements.quitMobileBtn = document.getElementById('btn-quit-mobile');
 
   domElements.canvas.width = W; 
   domElements.canvas.height = H;
@@ -38,24 +40,69 @@ document.addEventListener('DOMContentLoaded', () => {
   // Sync initial hi-score into HUD immediately
   if (domElements.hiscoreEl) {domElements.hiscoreEl.textContent = gameState.hiScore;}
 
-  function resize() {
-    const wrapper = document.getElementById('game-wrapper');
-    wrapper.style.transform = 'none';
-    const rect = wrapper.getBoundingClientRect();
-    const scaleX = window.innerWidth / rect.width;
-    const scaleY = window.innerHeight / rect.height;
-    const scale = Math.min(scaleX, scaleY) * 0.98;
-    wrapper.style.transform = `scale(${scale})`;
-    wrapper.style.transformOrigin = 'center center';
-  }
-  resize();
-  window.addEventListener('resize', resize);
+  // Layout is now handled completely by CSS. No JS resizing needed.
 
   setupInput();
 
-  // ─── Splash Screen Navigation ───
+  // ─── Splash Screen D-pad Navigation ───
   const menuMain = document.getElementById('menu-main');
   const menuControls = document.getElementById('menu-controls');
+  const menuCards = Array.from(document.querySelectorAll('.mode-card'));
+  let menuCursor = 0; // index of currently highlighted card
+
+  function setMenuCursor(index) {
+    menuCursor = (index + menuCards.length) % menuCards.length;
+    menuCards.forEach((card, i) => {
+      card.classList.toggle('selected', i === menuCursor);
+    });
+  }
+
+  function confirmMenuSelection() {
+    if (gameState.state !== 'menu') return;
+    const selected = menuCards[menuCursor];
+    if (selected.id === 'card-competitive') {
+      startGame(1, true);
+    } else if (selected.id === 'card-arcade') {
+      // Default to level 1 for arcade via controller
+      startGame(1, false);
+    }
+  }
+
+  // Wire D-pad Up/Down and keyboard arrows to menu cursor when in menu state
+  document.addEventListener('keydown', (e) => {
+    if (gameState.state !== 'menu') return;
+    if (!menuMain.classList.contains('hidden')) {
+      if (e.code === 'ArrowUp' || e.code === 'ArrowLeft' || e.code === 'KeyW') {
+        e.preventDefault();
+        setMenuCursor(menuCursor - 1);
+      } else if (e.code === 'ArrowDown' || e.code === 'ArrowRight' || e.code === 'KeyS') {
+        e.preventDefault();
+        setMenuCursor(menuCursor + 1);
+      } else if (e.code === 'Space' || e.code === 'Enter' || e.code === 'KeyZ') {
+        e.preventDefault();
+        confirmMenuSelection();
+      }
+    }
+  });
+
+  // Wire physical D-pad buttons to menu cursor too
+  document.getElementById('d-up')?.addEventListener('pointerdown', (e) => {
+    if (gameState.state !== 'menu') return;
+    e.preventDefault();
+    setMenuCursor(menuCursor - 1);
+  });
+  document.getElementById('d-down')?.addEventListener('pointerdown', (e) => {
+    if (gameState.state !== 'menu') return;
+    e.preventDefault();
+    setMenuCursor(menuCursor + 1);
+  });
+  document.getElementById('btn-fire')?.addEventListener('pointerdown', (e) => {
+    if (gameState.state !== 'menu') return;
+    e.preventDefault();
+    confirmMenuSelection();
+  }, true); // capture phase so it runs before input.js handler
+
+  setMenuCursor(0); // highlight first card by default
 
   function showMainMenu() {
     domElements.olTitle.textContent = 'SPACE IMPACT';
@@ -65,6 +112,9 @@ document.addEventListener('DOMContentLoaded', () => {
     menuMain.classList.remove('hidden');
     menuControls.classList.add('hidden');
     domElements.overlay.classList.remove('hidden');
+    // Hide quit button on menu
+    if (domElements.quitMobileBtn) domElements.quitMobileBtn.classList.remove('visible');
+    setMenuCursor(0); // reset cursor to first item each time menu opens
   }
 
   // Competitive Mode — starts at Level 1, tracks hi-score
@@ -89,6 +139,23 @@ document.addEventListener('DOMContentLoaded', () => {
     menuControls.classList.add('hidden');
     menuMain.classList.remove('hidden');
   });
+
+  // Mobile Quit Button — show during play, trigger pause modal
+  const btnQuitMobile = document.getElementById('btn-quit-mobile');
+  if (btnQuitMobile) {
+    btnQuitMobile.addEventListener('pointerdown', (e) => {
+      e.preventDefault();
+      if (gameState.state === 'playing') toggleQuitModal();
+    });
+  }
+
+  // Show quit button when game starts (game.js calls startGame/respawn)
+  // We observe gameState.state changes via a lightweight interval
+  setInterval(() => {
+    if (!domElements.quitMobileBtn) return;
+    const playing = gameState.state === 'playing';
+    domElements.quitMobileBtn.classList.toggle('visible', playing);
+  }, 200);
 
   // Quit Modal
   document.getElementById('btn-quit-no').addEventListener('click', () => {
